@@ -1,0 +1,84 @@
+{
+     "status": true,
+     "data": {
+          "slot_1230pm": 5,
+          "slot_0330pm": 5,
+          "operator": "2",
+          "timing": [
+               [
+                    {
+                         "lbl": "10:30am",
+                         "lbl_display": "10:30 am",
+                         "allowd": 5,
+                         "booked": 0,
+                         "lbl_status": false
+                    },
+                    {
+                         "lbl": "11:30am",
+                         "lbl_display": "11:30 am",
+                         "allowd": 5,
+                         "booked": 0,
+                         "lbl_status": false
+                    },
+                    {
+                         "lbl": "12:30pm",
+                         "lbl_display": "12:30 pm",
+                         "allowd": 5,
+                         "booked": 1,
+                         "lbl_status": true
+                    },
+                    {
+                         "lbl": "02:30pm",
+                         "lbl_display": "02:30 pm",
+                         "allowd": 5,
+                         "booked": 3,
+                         "lbl_status": true
+                    },
+                    {
+                         "lbl": "03:30pm",
+                         "lbl_display": "03:30 pm",
+                         "allowd": 5,
+                         "booked": 3,
+                         "lbl_status": true
+                    }
+               ],
+               [
+                    {
+                         "lbl": "10:30am",
+                         "lbl_display": "10:30 am",
+                         "allowd": 5,
+                         "booked": 0,
+                         "lbl_status": false
+                    },
+                    {
+                         "lbl": "11:30am",
+                         "lbl_display": "11:30 am",
+                         "allowd": 5,
+                         "booked": 0,
+                         "lbl_status": false
+                    },
+                    {
+                         "lbl": "12:30pm",
+                         "lbl_display": "12:30 pm",
+                         "allowd": 5,
+                         "booked": 1,
+                         "lbl_status": true
+                    },
+                    {
+                         "lbl": "02:30pm",
+                         "lbl_display": "02:30 pm",
+                         "allowd": 5,
+                         "booked": 4,
+                         "lbl_status": true
+                    },
+                    {
+                         "lbl": "03:30pm",
+                         "lbl_display": "03:30 pm",
+                         "allowd": 5,
+                         "booked": 2,
+                         "lbl_status": true
+                    }
+               ]
+          ]
+     }
+}
