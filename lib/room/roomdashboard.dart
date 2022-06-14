@@ -26,6 +26,38 @@ class _DashBoardState extends State<DashBoard> {
   var name;
   String date = '';
   int todayTotal = 0;
+  final TextEditingController itemNameController = new TextEditingController();
+  final TextEditingController priceController = new TextEditingController();
+  updateItem(String uid, itemId, item, price) async {
+    print('ITEM ID = $itemId');
+    print('ITEM name = $item');
+    print('ITEM price = ${price.toString()}');
+    // item = itemNameController.text;
+    // price= priceController.text;
+    Map data = {
+      'item': item,
+      'price': price,
+    };
+    print(data);
+    String body = json.encode(data);
+    print(BaseURL().baseAPIUrl + "room/month/item/" + itemId);
+    var response = await http.put(
+      Uri.parse(BaseURL().baseAPIUrl + "room/month/item/" + itemId),
+      body: body,
+      headers: {
+        "Content-Type": "application/json",
+        "accept": "application/json",
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode == 200) {
+      print('Data Update');
+    } else {
+      print(
+        "Error",
+      );
+    }
+  }
 
   Future<List<dynamic>> getMonthData() async {
     String url = BaseURL().baseAPIUrl + "room/month";
@@ -48,6 +80,68 @@ class _DashBoardState extends State<DashBoard> {
   void initState() {
     super.initState();
     getMonthData();
+  }
+
+  openSheet(
+    var itemId,
+    itemName,
+    itemPrice,
+  ) {
+    itemName = itemNameController.text;
+    itemPrice = priceController.text;
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(20),
+          height: 250,
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(itemId),
+                  TextFormField(
+                    initialValue: itemName,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    initialValue: itemPrice.toString(),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      print(itemId + itemName + itemPrice.toString());
+                      updateItem(
+                        userId,
+                        itemId,
+                        itemName,
+                        itemPrice.toString(),
+                      );
+                    },
+                    child: Text(
+                      'Update',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -125,7 +219,17 @@ class _DashBoardState extends State<DashBoard> {
                                 ),
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
+                              //url/room/month/item/:itemId - update
+                              //url/personal/month/item/:itemId - delete
+
                               child: ListTile(
+                                onTap: () {
+                                  openSheet(
+                                    snapshot.data[index]['_id'],
+                                    snapshot.data[index]['item'],
+                                    snapshot.data[index]['price'].toString(),
+                                  );
+                                },
                                 leading: CircleAvatar(
                                   child: Text(name[0]),
                                 ),
