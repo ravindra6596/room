@@ -1,6 +1,7 @@
 //@dart=2.9
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 import 'login/login_form.dart';
 import 'widgets/tabbar.dart';
@@ -11,6 +12,7 @@ Future<void> main() async {
   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
   var prefs = await SharedPreferences.getInstance();
   username = prefs.getString('email');
+  setPathUrlStrategy();
   runApp(
     MyApp(),
   );
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: LandingScreen());
+        home: LandingScreen(),);
   }
 }
 
