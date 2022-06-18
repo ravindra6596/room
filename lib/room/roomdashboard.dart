@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:room/services/base.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:room/room/delete.dart';
+import 'package:room/room/updateBotttomSheet.dart';
+import 'package:room/services/base.dart';
 import 'package:room/services/log.dart';
 
 import 'addroomItem.dart';
-// ignore: unused_import
-import 'jobs.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({Key key}) : super(key: key);
@@ -28,36 +28,6 @@ class _DashBoardState extends State<DashBoard> {
   int todayTotal = 0;
   final TextEditingController itemNameController = new TextEditingController();
   final TextEditingController priceController = new TextEditingController();
-  updateItem(String uid, itemId, item, price) async {
-    print('ITEM ID = $itemId');
-    print('ITEM name = $item');
-    print('ITEM price = ${price.toString()}');
-    // item = itemNameController.text;
-    // price= priceController.text;
-    Map data = {
-      'item': item,
-      'price': price,
-    };
-    print(data);
-    String body = json.encode(data);
-    print(BaseURL().baseAPIUrl + "room/month/item/" + itemId);
-    var response = await http.put(
-      Uri.parse(BaseURL().baseAPIUrl + "room/month/item/" + itemId),
-      body: body,
-      headers: {
-        "Content-Type": "application/json",
-        "accept": "application/json",
-        'Authorization': 'Bearer $token',
-      },
-    );
-    if (response.statusCode == 200) {
-      print('Data Update');
-    } else {
-      print(
-        "Error",
-      );
-    }
-  }
 
   Future<List<dynamic>> getMonthData() async {
     String url = BaseURL().baseAPIUrl + "room/month";
@@ -82,68 +52,6 @@ class _DashBoardState extends State<DashBoard> {
     getMonthData();
   }
 
-  openSheet(
-    var itemId,
-    itemName,
-    itemPrice,
-  ) {
-    itemName = itemNameController.text;
-    itemPrice = priceController.text;
-    return showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (context) {
-        return Container(
-          padding: EdgeInsets.all(20),
-          height: 250,
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(itemId),
-                  TextFormField(
-                    initialValue: itemName,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    initialValue: itemPrice.toString(),
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      print(itemId + itemName + itemPrice.toString());
-                      updateItem(
-                        userId,
-                        itemId,
-                        itemName,
-                        itemPrice.toString(),
-                      );
-                    },
-                    child: Text(
-                      'Update',
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     isLoggedIn();
@@ -155,11 +63,14 @@ class _DashBoardState extends State<DashBoard> {
           IconButton(
             iconSize: 30,
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddRoomItem(),
-                ),
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Container(
+                    height: 300,
+                    child: AddRoomItem(),
+                  );
+                },
               );
             },
             icon: Icon(
@@ -207,38 +118,54 @@ class _DashBoardState extends State<DashBoard> {
                             items = snapshot.data[index]['item'];
                             price = snapshot.data[index]['price'];
                             name = snapshot.data[index]['uid']['name'];
-                            date = snapshot.data[index]['createdAt'];
-                            DateTime dateTime = DateTime.tryParse(
-                                snapshot.data[index]['createdAt']);
-
-                            date = DateFormat('dd-MM-yyyy').format(dateTime);
-                            return Card(
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                  color: Colors.green.shade300,
+                            String dateFormate =
+                                DateFormat("dd-MM-yyyy  hh:mm:ss-a").format(
+                              DateTime.parse(
+                                snapshot.data[index]['createdAt'],
+                              ).toLocal(),
+                            );
+                            return Dismissible(
+                              direction: DismissDirection.endToStart,
+                              resizeDuration: Duration(milliseconds: 200),
+                              key: UniqueKey(),
+                              background: Container(
+                                padding: EdgeInsets.only(left: 28.0),
+                                alignment: AlignmentDirectional.centerEnd,
+                                color: Colors.red,
+                                child: Icon(
+                                  Icons.delete_forever,
+                                  color: Colors.white,
+                                  size: 30,
                                 ),
-                                borderRadius: BorderRadius.circular(15.0),
                               ),
-                              //url/room/month/item/:itemId - update
-                              //url/personal/month/item/:itemId - delete
+                              onDismissed: (direction) {
+                                showDeleteAlert(
+                                    context, snapshot.data[index]['_id']);
+                              },
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(
+                                    color: Colors.green.shade300,
+                                  ),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                //url/room/month/item/:itemId - update
+                                //url/personal/month/item/:itemId - delete
 
-                              child: ListTile(
-                                onTap: () {
-                                  openSheet(
-                                    snapshot.data[index]['_id'],
-                                    snapshot.data[index]['item'],
-                                    snapshot.data[index]['price'].toString(),
-                                  );
-                                },
-                                leading: CircleAvatar(
-                                  child: Text(name[0]),
-                                ),
-                                title: Text(items),
-                                subtitle: Text(
-                                  name + '\n' + date.toString(),
-                                ),
-                                trailing: Text(
-                                  '₹ ${price.toString()}.0',
+                                child: ListTile(
+                                  onTap: () {
+                                    updateBottomSheet(context, snapshot, index);
+                                  },
+                                  leading: CircleAvatar(
+                                    child: Text(name[0]),
+                                  ),
+                                  title: Text(items),
+                                  subtitle: Text(
+                                    name + '\n' + dateFormate.toString(),
+                                  ),
+                                  trailing: Text(
+                                    '₹ ${price.toString()}.0',
+                                  ),
                                 ),
                               ),
                             );
@@ -275,14 +202,6 @@ class _DashBoardState extends State<DashBoard> {
           ),
         ],
       ),
-      /* floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Jobs(),
-          ),
-        ),
-      ), */
     );
   }
 }

@@ -21,7 +21,6 @@ class _TabBarsState extends State<TabBars> {
     Profile(
       post: fetchPost(),
     ),
-    
   ];
   @override
   Widget build(BuildContext context) {
@@ -70,8 +69,6 @@ class _TabBarsState extends State<TabBars> {
               ),
               label: 'Account',
             ),
-            
-            
           ],
         ),
       ),

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:room/login/login_form.dart';
@@ -232,27 +231,6 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
               ),
-              /* Form(
-                key: dobValidator,
-                child: TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'DOB Can\`t Be Empty.';
-                    }
-                    return null;
-                  },
-                  controller: dob,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Date Of Birth',
-                    prefixIcon: Icon(
-                      Icons.date_range,
-                      color: Colors.black,
-                    ),
-                  ),
-                  textInputAction: TextInputAction.next,
-                ),
-              ), */
               SizedBox(
                 height: 10,
               ),
@@ -302,17 +280,16 @@ class _RegisterState extends State<Register> {
                                 contactValidator.currentState.validate() &&
                                 dobValidator.currentState.validate() &&
                                 passwordValidator.currentState.validate()) {
-                              register(name.text, email.text, contact.text,
-                                  sel, password.text);
+                              register(name.text, email.text, contact.text, sel,
+                                  password.text);
                             }
                           });
                         },
                         child: Text('Register'),
                       ),
                     )
-                  : SpinKitDualRing(
-                      color: Colors.green,
-                      size: 50.0,
+                  : Center(
+                      child: CircularProgressIndicator(),
                     ),
             ],
           ),

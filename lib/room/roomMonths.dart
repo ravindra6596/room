@@ -4,6 +4,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:room/room/delete.dart';
+import 'package:room/room/updateBotttomSheet.dart';
 import 'package:room/services/base.dart';
 import 'package:http/http.dart' as http;
 import 'package:room/services/log.dart';
@@ -86,7 +88,7 @@ class _RoomMonthsState extends State<RoomMonths> {
                   future: getMonthData(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      if (snapshot.data.length>0) {
+                      if (snapshot.data.length > 0) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListView.builder(
@@ -99,27 +101,52 @@ class _RoomMonthsState extends State<RoomMonths> {
                               price = snapshot.data[index]['price'];
                               name = snapshot.data[index]['uid']['name'];
                               date = snapshot.data[index]['createdAt'];
-                              DateTime dateTime = DateTime.tryParse(
-                                  snapshot.data[index]['createdAt']);
-
-                              date = DateFormat('dd-MM-yyyy').format(dateTime);
-                              return Card(
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: Colors.green.shade300,
+                              String dateFormate =
+                                  DateFormat("dd-MM-yyyy  hh:mm:ss-a").format(
+                                DateTime.parse(
+                                  snapshot.data[index]['createdAt'],
+                                ).toLocal(),
+                              );
+                              return Dismissible(
+                                direction: DismissDirection.endToStart,
+                                resizeDuration: Duration(milliseconds: 200),
+                                key: UniqueKey(),
+                                background: Container(
+                                  padding: EdgeInsets.only(left: 28.0),
+                                  alignment: AlignmentDirectional.centerEnd,
+                                  color: Colors.red,
+                                  child: Icon(
+                                    Icons.delete_forever,
+                                    color: Colors.white,
+                                    size: 30,
                                   ),
-                                  borderRadius: BorderRadius.circular(15.0),
                                 ),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    child: Text(name[0]),
+                                onDismissed: (direction) {
+                                  showDeleteAlert(
+                                      context, snapshot.data[index]['_id']);
+                                },
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                      color: Colors.green.shade300,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15.0),
                                   ),
-                                  title: Text(items),
-                                  subtitle: Text(
-                                    name + '\n' + date.toString(),
-                                  ),
-                                  trailing: Text(
-                                    '₹ ${price.toString()}.0',
+                                  child: ListTile(
+                                    onTap: () {
+                                      updateBottomSheet(
+                                          context, snapshot, index);
+                                    },
+                                    leading: CircleAvatar(
+                                      child: Text(name[0]),
+                                    ),
+                                    title: Text(items),
+                                    subtitle: Text(
+                                      name + '\n' + dateFormate.toString(),
+                                    ),
+                                    trailing: Text(
+                                      '₹ ${price.toString()}.0',
+                                    ),
                                   ),
                                 ),
                               );
@@ -156,14 +183,6 @@ class _RoomMonthsState extends State<RoomMonths> {
             ),
           ],
         ),
-        /* floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Jobs(),
-            ),
-          ),
-        ), */
       ),
     );
   }

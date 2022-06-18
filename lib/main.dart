@@ -1,7 +1,6 @@
 //@dart=2.9
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:splashscreen/splashscreen.dart';
 
 import 'login/login_form.dart';
 import 'widgets/tabbar.dart';
@@ -18,33 +17,45 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Modern Boys',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: SplashScreen(
-        image: Image.asset(
-          'assets/images/cycle.png',
-          width: 200,
-          //height: 300,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.green,
         ),
-        backgroundColor: Colors.green[300],
-        seconds: 5,
-        navigateAfterSeconds: username == null ? LoginScreen() : TabBars(),
-        styleTextUnderTheLoader: new TextStyle(),
-        photoSize: 150.0,
-        loaderColor: Colors.white,
-        loadingText: Text(
-          'Welcome To Our App',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-          ),
+        home: LandingScreen());
+  }
+}
+
+class LandingScreen extends StatefulWidget {
+  const LandingScreen({Key key}) : super(key: key);
+
+  @override
+  State<LandingScreen> createState() => _LandingScreenState();
+}
+
+class _LandingScreenState extends State<LandingScreen> {
+  @override
+  void initState() {
+    Future.delayed(Duration(seconds: 5), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => username == null ? LoginScreen() : TabBars(),
+        ),
+      );
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.greenAccent,
+      body: Center(
+        child: Image.asset(
+          'assets/images/splash.gif',
         ),
       ),
     );

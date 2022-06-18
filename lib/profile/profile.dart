@@ -124,17 +124,6 @@ class _ProfileState extends State<Profile> {
         actions: [
           TextButton(
             onPressed: () => _confirmSignOut(context),
-            /* () async {
-              SharedPreferences sharedPreferences =
-                  await SharedPreferences.getInstance();
-              sharedPreferences.remove('token');
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext ctx) => LoginScreen(),
-                ),
-              );
-            }, */
             child: Text(
               'Logout',
               style: TextStyle(

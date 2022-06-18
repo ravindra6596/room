@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BaseURL {
-   final String baseAPIUrl = "https://api-room.herokuapp.com/";
+  final String baseAPIUrl = "https://api-room.herokuapp.com/";
   SharedPreferences sharedPreferences;
 
   Map<String, dynamic> parseJwt(String token) {
@@ -40,11 +40,11 @@ class BaseURL {
     return utf8.decode(base64Url.decode(output));
   }
 
-  Future<Map<String, dynamic> > checkIfLoggedIn() async {
+  Future<Map<String, dynamic>> checkIfLoggedIn() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var token = sharedPreferences.getString('token');
     if (token == null) return null;
-    
+
     var obj = parseJwt(token);
     int currTime = DateTime.now().millisecondsSinceEpoch;
 
@@ -52,13 +52,9 @@ class BaseURL {
       return null;
     } else {
       return {
-        
         "token": token,
         "_id": sharedPreferences.getString('_id'),
-        //  "name": sharedPreferences.getString('name'),
         "email": sharedPreferences.getString('email'),
-        // "contact": sharedPreferences.getString('contact'),
-        // "dob": sharedPreferences.getString('dob')
       };
     }
   }

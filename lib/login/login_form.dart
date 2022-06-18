@@ -1,23 +1,16 @@
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:room/register/register.dart';
 import 'package:room/services/base.dart';
 import 'package:room/widgets/tabbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 import 'design_widgets/header.dart';
 
 class LoginScreen extends StatefulWidget {
-  // final AppBar appBar;
-
-  // LoginScreen({key, this.appBar}) : super(key: key);
-
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -54,17 +47,11 @@ class _LoginScreenState extends State<LoginScreen> {
     if (response.statusCode == 200) {
       jsonData = json.decode(response.body);
       if (jsonData != null) {
-        
         sharedPreferences.setString("token", jsonData['token']);
         getUserData(email, jsonData['token']).then((userData) {
           if (userData != null) {
             sharedPreferences.setString("email", email);
             sharedPreferences.setString("_id", jsonData['message'][0]['_id']);
-            /*  sharedPreferences.setString("name", jsonData['message'][0]['name']);
-            sharedPreferences.setString("email", jsonData['message'][0]['email']);
-            sharedPreferences.setString("contact", jsonData['message'][0]['contact']);
-            sharedPreferences.setString("dob", jsonData['message'][0]['dob']);
-           */
           }
         });
 
@@ -240,10 +227,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(15.0)),
               ),
             )
-          //CircularProgressIndicator()
-          : SpinKitDualRing(
-              color: Colors.green,
-              size: 50.0,
+          : Center(
+              child: CircularProgressIndicator(),
             ),
     );
   }
